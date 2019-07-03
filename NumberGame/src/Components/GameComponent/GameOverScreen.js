@@ -6,6 +6,7 @@ import AntDesign from  'react-native-vector-icons/AntDesign';
 import * as levelAction from './../../actions/levelAction';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import Sound from 'react-native-sound';
 
 type Props = {};
 class GameOverScreen extends Component<Props> {
@@ -15,6 +16,28 @@ class GameOverScreen extends Component<Props> {
       success: this.props.navigation.state.params.success,
       levelOfDifficulty: this.props.navigation.state.params.success?this.props.navigation.state.params.levelOfDifficulty+1:this.props.navigation.state.params.levelOfDifficulty
     }
+  }
+
+  componentDidMount(){
+    let soundType = this.props.navigation.state.params.success ? 'clapping.mp3' : 'boo.mp3';
+    Sound.setCategory('Playback');
+    var whoosh = new Sound(soundType, Sound.MAIN_BUNDLE, (error) => {
+      if (error) {
+        console.log('## failed to load the sound', error);
+        return;
+      }
+      // loaded successfully
+      console.log('## duration in seconds: ' + whoosh.getDuration() + 'number of channels: ' + whoosh.getNumberOfChannels());
+    
+      // Play the sound with an onEnd callback
+      whoosh.play((success) => {
+        if (success) {
+          console.log('## successfully finished playing');
+        } else {
+          console.log('## playback failed due to audio decoding errors');
+        }
+      });
+    });
   }
 
   resetToGameScreen(){
